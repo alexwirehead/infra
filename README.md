@@ -8,7 +8,7 @@
 gcloud compute instances create \
   --boot-disk-size=10GB \
   --image=ubuntu-1604-xenial-v20190605 \
-  --image-project=ubuntu-os-cloud \   
+  --image-project=ubuntu-os-cloud \
   --machine-type=g1-small \
   --tags puma-server \
   --restart-on-failure \
@@ -16,15 +16,13 @@ gcloud compute instances create \
         bash -c "wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/install_ruby.sh | bash && \
                  wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/install_mongodb.sh | bash && \
                  wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/deploy.sh | bash"' \
-  --zone=europe-west1-b reddit-app
-'''
+  --zone=europe-west1-b reddit-app'''
 
 **Открываем порт приложения в firewall**
 
 '''bash
-gcloud compute firewall-rules create simple-app \
+gcloud compute firewall-rules create puma-server \
   --allow tcp:8080 \
-  --source-tags=reddit-app \
+  --target-tags=puma-server \
   --source-ranges=0.0.0.0/0 \
-  --description="allow tcp for app"
-'''
+  --description="allow tcp for app"'''
