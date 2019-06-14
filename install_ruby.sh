@@ -5,7 +5,7 @@ curl -sSL https://rvm.io/pkuczynski.asc | gpg --import -
 echo "install rvm"
 curl -sSL https://get.rvm.io | bash -s stable
 echo "Set RVM scripts and Install requirements"
-source ~/.rvm/scripts/rvm
+source /etc/profile.d/rvm.sh
 rvm requirements
 echo "Install Ruby 2.4.1"
 rvm install 2.4.1
