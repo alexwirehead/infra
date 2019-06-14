@@ -6,4 +6,4 @@ cd ~/reddit
 echo "Install dependencies"
 bundle install
 echo "Start Puma Server"
-puma -p 80 -d
+puma -p 8080 -d
