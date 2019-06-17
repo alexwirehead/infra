@@ -3,7 +3,7 @@
         {
             "type": "googlecompute",
             "project_id": "learning-243306",
-            "image_name": "reddit-base={{timestamp}}",
+            "image_name": "reddit-base-{{timestamp}}",
             "source_image": "ubuntu-1604-xenial-v20190605",
             "zone": "europe-west1-b",
             "ssh_username": "appuser",
