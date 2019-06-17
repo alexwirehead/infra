@@ -13,7 +13,7 @@
             "image_name": "reddit-base-{{timestamp}}",
             "source_image": "{{user `source_image`}}",
             "disk_size": 10,
-            "network": "reddit-app",
+            "network": "default",
             "tags": ["puma-server"],
             "zone": "europe-west1-b",
             "ssh_username": "appuser",
