@@ -9,15 +9,15 @@
         {
             "type": "googlecompute",
             "image_description": "Baked simple Sinatra App image",
-            "project_id": "{{user 'project_id'}}",
+            "project_id": "{{user `project_id`}}",
             "image_name": "reddit-base-{{timestamp}}",
-            "source_image": "{{user 'source_image'}}",
+            "source_image": "{{user `source_image`}}",
             "disk_size": 10,
             "network": "reddit-app",
             "tags": ["puma-server"],
             "zone": "europe-west1-b",
             "ssh_username": "appuser",
-            "machine_type": "{{user 'machine_type'}}"
+            "machine_type": "{{user `machine_type`}}"
         }
     ],
 
