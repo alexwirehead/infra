@@ -1,6 +1,6 @@
 provider "google" {
-  project = "infra-244406"
-  region = "europe-west1"
+  project = "${var.project}"
+  region = "${var.region}"
 }
 
 
@@ -12,7 +12,7 @@ resource "google_compute_instance" "app" {
   tags = ["reddit-app"]
   boot_disk {
     initialize_params {
-      image = "reddit-base-1561099838"
+      image = "${var.disk_image}"
     }
   }
   
@@ -24,7 +24,7 @@ resource "google_compute_instance" "app" {
   
   # определим metadata для инстанса
   metadata = {
-    sshKeys = "appuser:${file("~/.ssh/appuser.pub")}"
+    sshKeys = "appuser:${file(var.public_key_path)}"
   }
   
   # параметры подключения к инстансу
