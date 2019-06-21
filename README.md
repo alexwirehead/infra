@@ -31,6 +31,7 @@ gcloud compute firewall-rules create puma-server \
 
 ## Выполненые задания по Packer HashiCorp
 
+
 ### В папке packer шаблоны для создания образов в GCP
 
 * immutable.json — bake шаблон с кодом
