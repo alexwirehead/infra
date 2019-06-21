@@ -1,25 +1,25 @@
 variable "project" {
-  type = "string"
+  type        = "string"
   description = "project id"
 }
 
 variable "region" {
-  type = "string"
+  type        = "string"
   description = "Instance region"
-  default = "europe-west1"
+  default     = "europe-west1"
 }
 
 variable "public_key_path" {
-  type = "string"
+  type        = "string"
   description = "Path to the public key used for ssh access"
 }
 
 variable "private_key_path" {
-  type = "string"
+  type        = "string"
   description = "Path to the private key used for provisioning"
 }
 
 variable "disk_image" {
-  type = "string"
+  type        = "string"
   description = "Disk image name"
 }
