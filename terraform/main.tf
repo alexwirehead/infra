@@ -20,7 +20,7 @@ resource "google_compute_instance" "app" {
     access_config {}
   }
   # определим metadata для инстанса
-  metadata {
+  metadata = {
     sshKeys = "appuser:${file("~/.ssh/appuser.pub")}"
   }
   
