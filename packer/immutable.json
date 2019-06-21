@@ -27,6 +27,11 @@
             "script": "scripts/install_ruby.sh"
         },
         {
+            "type": "file",
+            "source": "files/puma.service",
+            "destination": "/tmp/puma.service"
+        },
+        {
             "type": "shell",
             "script": "scripts/install_mongo.sh",
             "execute_command": "sudo {{.Path}}"

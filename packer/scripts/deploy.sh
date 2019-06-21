@@ -6,4 +6,6 @@ cd ~/reddit
 echo "Install dependencies"
 bundle install
 echo "Start Puma Server"
-puma -p 8080 -d
+sudo mv /tmp/puma.service /etc/systemd/system/puma.service
+sudo systemctl start puma
+sudo systemctl enable puma

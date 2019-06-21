@@ -29,7 +29,8 @@ gcloud compute firewall-rules create puma-server \
   --description="allow tcp for app"
 ```
 
-## Выполненые задания по Packer Hashicorp
+## Выполненые задания по Packer HashiCorp
+
 
 ### В папке packer шаблоны для создания образов в GCP
 
@@ -37,3 +38,42 @@ gcloud compute firewall-rules create puma-server \
 * ubuntu16.json — шаблон с настроенным окружением, необходим деплой кода
 * variables.json — переменные
 * scripts — скрипты для настройки и деплоя образов
+
+** Для билда base os image в директории packer выполнить команду:
+
+```bash
+ packer build --var-file=variables.json ubuntu16.json
+```
+** Для создания инстанса из base os image выполнить
+
+```bash
+gcloud compute instances create \
+  --boot-disk-size=10GB \
+  --image=--image=reddit-base-<epoch_creation_time> \
+  --image-project=ubuntu-os-cloud \
+  --machine-type=g1-small \
+  --tags puma-server \
+  --restart-on-failure \
+  --metadata startup-script='sudo -u appuser \
+        bash -c "wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/deploy.sh | bash"' \
+  --zone=europe-west1-b reddit-app
+```
+
+** Для билда baked os image в директории packer выполнить команду:
+
+```bash
+ packer build --var-file=variables.json ubuntu16.json
+```
+
+** Для создания инстанса из baked os image выполнить
+
+```bash
+gcloud compute instances create \
+  --boot-disk-size=10GB \
+  --image=--image=reddit-immutable-<epoch_creation_time> \
+  --image-project=ubuntu-os-cloud \
+  --machine-type=g1-small \
+  --tags puma-server \
+  --restart-on-failure \
+  --zone=europe-west1-b reddit-app
+```
