@@ -38,12 +38,12 @@ gcloud compute firewall-rules create puma-server \
 * variables.json — переменные
 * scripts — скрипты для настройки и деплоя образов
 
-** Для билда base os image в директории packer выполнить команду:
+**Для билда base os image в директории packer выполнить команду:**
 
 ```bash
  packer build --var-file=variables.json ubuntu16.json
 ```
-** Для создания инстанса из base os image выполнить
+**Для создания инстанса из base os image выполнить:**
 
 ```bash
 gcloud compute instances create \
@@ -58,13 +58,13 @@ gcloud compute instances create \
   --zone=europe-west1-b reddit-app
 ```
 
-** Для билда baked os image в директории packer выполнить команду:
+**Для билда baked os image в директории packer выполнить команду::**
 
 ```bash
  packer build --var-file=variables.json ubuntu16.json
 ```
 
-** Для создания инстанса из baked os image выполнить
+**Для создания инстанса из baked os image выполнить:**
 
 ```bash
 gcloud compute instances create \
