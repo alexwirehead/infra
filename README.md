@@ -28,3 +28,12 @@ gcloud compute firewall-rules create puma-server \
   --source-ranges=0.0.0.0/0 \
   --description="allow tcp for app"
 ```
+
+## Выполненые задания по Packer Hashicorp
+
+### В папке packer шаблоны для создания образов в GCP
+
+* immutable.json — bake шаблон с кодом
+* ubuntu16.json — шаблон с настроенным окружением, необходим деплой кода
+* variables.json — переменные
+* scripts — скрипты для настройки и деплоя образов
