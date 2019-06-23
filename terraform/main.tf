@@ -19,7 +19,9 @@ resource "google_compute_instance" "app" {
   # определим сетевой интерфейс
   network_interface {
     network = "default"
-    access_config {}
+    access_config {
+      nat_ip = "${google_compute_address.app_ip.address}"
+    }
   }
 
   # определим metadata для инстанса
