@@ -1,7 +1,7 @@
 terraform {
   backend "gcs" {
-    bucket  = "${var.remote_state_bucket_name}"
-    prefix  = "${var.remote_state_bucket_prefix}"
+    bucket  = "wirehead_tf_state"
+    prefix  = "terraform_main_state"
   }
 }
 

@@ -35,15 +35,3 @@ variable "db_disk_image" {
   description = "Disk image for reddit db"
   default     = "reddit-db-base"
 }
-
-variable "remote_state_bucket_name" {
-  type = "string"
-  description = "GCS Bucket name for tfstate"
-  default = "wirehead_tf_state"
-}
-
-variable "remote_state_bucket_prefix" {
-  type = "string"
-  description = "GCS Bucket prefix for tfstate"
-  default = "terraform_prod_state"
-}
