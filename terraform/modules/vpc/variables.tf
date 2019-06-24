@@ -1,5 +1,5 @@
 variable "source_ranges" {
-  type    = list(string)
+  type        = list(string)
   description = "Allow IP address"
-  default = ["0.0.0.0/0"]
+  default     = ["0.0.0.0/0"]
 }
