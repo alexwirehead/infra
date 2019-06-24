@@ -9,7 +9,7 @@ variable "private_key_path" {
 }
 
 variable "app_disk_image" {
-  type = "string"
+  type        = "string"
   description = "Disk image for reddit app"
-  default = "reddit-app-base"
+  default     = "reddit-app-base"
 }
