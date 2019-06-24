@@ -1,0 +1,31 @@
+{
+    "variables":{
+        "project_id": null,
+        "source_image": null,
+        "machine_type": "f1-micro"
+    },
+
+    "builders": [
+        {
+            "type": "googlecompute",
+            "image_description": "Baked Mongo DB image",
+            "project_id": "{{user `project_id`}}",
+            "image_name": "reddit-db-base",
+            "source_image": "{{user `source_image`}}",
+            "disk_size": 10,
+            "network": "default",
+            "tags": ["puma-server"],
+            "zone": "europe-west1-b",
+            "ssh_username": "appuser",
+            "machine_type": "{{user `machine_type`}}"
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "scripts/install_mongo.sh",
+            "execute_command": "sudo {{.Path}}"
+        }
+    ]
+}
