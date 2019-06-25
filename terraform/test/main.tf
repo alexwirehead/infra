@@ -1,7 +1,7 @@
 terraform {
   backend "gcs" {
     bucket  = "wirehead_tf_state"
-    prefix  = "terraform_stage_state"
+    prefix  = "terraform_test_state"
   }
 }
 
