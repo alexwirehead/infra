@@ -8,7 +8,7 @@
   tasks:
   - name: "Install ruby and rubygems and required packages"
     apt: "name={{ item }} state=present"
-    whith_items:
+    with_items:
       - ruby-full
       - ruby-dev
       - build-essential
@@ -23,24 +23,33 @@
 - name: "Reddit app: install mongo"
   hosts: all
   gather_facts: no
+  become: yes
 
   tasks:
-  - name: "Install mongo package"
+  - name: "Add mongo  repo"
     apt_repository:
       repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
       state: present
       filename: mongodb-org-3.2.list
+  
+  - name: "Install mongodb"  
     apt:
+      allow_unauthenticated: yes
       name: mongodb-org
       state: present
 
 # Deploy reddit app
 - name: "Reddit App: Deploy application"
-  hosts: reddit_app
+  hosts: all
   gather_facts: no
 
   tasks:
-  - name: Remove me after adding real things
-    debug:
-      msg: "deploy module"
+  - name: "Fetch app source code"
+    git:
+      repo: 'https://github.com/Artemmkin/reddit.git'
+      dest: '~/reddit'
+  - name: "Install gems by bundler"
+    bundler:
+      state: present
+      gemfile: ~/reddit/Gemfile
 ...
