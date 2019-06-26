@@ -20,7 +20,7 @@
       user_install: no
 
   - name: Add Puma Server service
-    file:
+    copy:
       src: puma.service
       dest: /etc/systemd/system/puma.service
 
@@ -73,5 +73,6 @@
       state: restarted
       daemon_reload: yes
       enabled: yes
+    become: yes
     when: fetch_source_success_check.changed and install_gems_success_check.changed
 ...
