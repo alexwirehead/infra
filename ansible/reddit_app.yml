@@ -24,30 +24,6 @@
       src: puma.service
       dest: /etc/systemd/system/puma.service
 
-# Setup and configure mongodb for reddit app
-- name: "Reddit app: install mongo"
-  hosts: reddit-db
-  gather_facts: no
-  become: yes
-
-  tasks:
-  - name: "Add mongo  repo"
-    apt_repository:
-      repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
-      state: present
-      filename: mongodb-org-3.2.list
-
-  - name: "Install mongodb"
-    apt:
-      allow_unauthenticated: yes
-      name: mongodb-org
-      state: present
-
-  - name: Enable and start mongodb
-    systemd:
-      name: mongod
-      state: restarted
-      enabled: yes
 
 # Deploy reddit app
 - name: "Reddit App: Deploy application"
