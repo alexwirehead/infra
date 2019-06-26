@@ -31,8 +31,8 @@
       repo: deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/3.2 multiverse
       state: present
       filename: mongodb-org-3.2.list
-  
-  - name: "Install mongodb"  
+
+  - name: "Install mongodb"
     apt:
       allow_unauthenticated: yes
       name: mongodb-org
@@ -48,6 +48,7 @@
     git:
       repo: 'https://github.com/Artemmkin/reddit.git'
       dest: '~/reddit'
+
   - name: "Install gems by bundler"
     bundler:
       state: present
