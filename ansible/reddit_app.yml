@@ -1,7 +1,7 @@
 ---
 # Setup and configure ruby for reddit app
 - name: "Reddit App: Configure app env"
-  hosts: all
+  hosts: reddit-app
   gather_facts: no
   become: yes
 
@@ -19,9 +19,14 @@
       state: present
       user_install: no
 
+  - name: Add Puma Server service
+    file:
+      src: puma.service
+      dest: /etc/systemd/system/puma.service
+
 # Setup and configure mongodb for reddit app
 - name: "Reddit app: install mongo"
-  hosts: all
+  hosts: reddit-db
   gather_facts: no
   become: yes
 
@@ -38,9 +43,15 @@
       name: mongodb-org
       state: present
 
+  - name: Enable and start mongodb
+    systemd:
+      name: mongod
+      state: restarted
+      enabled: yes
+
 # Deploy reddit app
 - name: "Reddit App: Deploy application"
-  hosts: all
+  hosts: reddit-app
   gather_facts: no
 
   tasks:
@@ -48,9 +59,19 @@
     git:
       repo: 'https://github.com/Artemmkin/reddit.git'
       dest: '~/reddit'
+    register: fetch_source_success_check
 
   - name: "Install gems by bundler"
     bundler:
       state: present
       gemfile: ~/reddit/Gemfile
+    register: install_gems_success_check
+
+  - name: Restart Puma Server
+    systemd:
+      name: puma
+      state: restarted
+      daemon_reload: yes
+      enabled: yes
+    when: fetch_source_success_check.changed and install_gems_success_check.changed
 ...

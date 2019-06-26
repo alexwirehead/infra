@@ -23,9 +23,9 @@
 
     "provisioners": [
         {
-            "type": "shell",
-            "script": "scripts/install_mongo.sh",
-            "execute_command": "sudo {{.Path}}"
+            "type": "ansible",
+            "playbook_file": "../ansible/reddit_app.yml",
+            "host_alias": "reddit-db"
         }
     ]
 }
