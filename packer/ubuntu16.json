@@ -25,6 +25,6 @@
         {
             "type": "ansible",
             "playbook_file": "../ansible/reddit_app.yml"
-        },
+        }
     ]
 }
