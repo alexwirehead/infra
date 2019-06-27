@@ -1,54 +1,63 @@
 ---
-# Setup and configure ruby for reddit app
-- name: "Reddit App: Configure app env"
-  hosts: reddit-app
-  gather_facts: no
-  become: yes
-
+- name: Configure hosts & deploy app
+  hosts: all
+  vars:
+    mongo_bind_ip: 0.0.0.0
+    db_host: 10.132.0.53
   tasks:
-  - name: "Install ruby and rubygems and required packages"
-    apt: "name={{ item }} state=present"
-    with_items:
-      - ruby-full
-      - ruby-dev
-      - build-essential
+    - name: Change mongo config file
+      become: true
+      template:
+        src: templates/mongod.conf.j2
+        dest: /etc/mongod.conf
+        mode: 0644
+      tags: db-tag
+      notify: restart mongod
 
-  - name: "Install Ruby bundler"
-    gem:
-      name: bundler
-      state: present
-      user_install: no
+    - name: Add config for DB connection
+      template:
+        src: templates/db_config.j2
+        dest: /home/appuser/db_configig
+      tags: db-tag
+      notify: restart mongod
+    
+    - name: Add unit file for Puma
+      become: true
+      copy:
+        src: files/puma.service
+        dest: /etc/systemd/system/puma.service
+      tags: app-tag
+      notify: reload puma
 
-  - name: Add Puma Server service
-    copy:
-      src: puma.service
-      dest: /etc/systemd/system/puma.service
+    - name: enable puma
+      become: true
+      systemd: name=puma enabled=yes
+      tags: app-tag
 
+    - name: Fetch the latest version of app code
+      git:
+        repo: 'https://github.com/Artemmkin/reddit.git'
+        dest: /home/appuser/reddit
+        version: monolith
+      tags: deploy-tag
+      notify: restart puma
 
-# Deploy reddit app
-- name: "Reddit App: Deploy application"
-  hosts: reddit-app
-  gather_facts: no
+    - name: Bundle install
+      bundler:
+        state: present
+        chdir: /home/appuser/reddit
+      tags: deploy-tag
+  
 
-  tasks:
-  - name: "Fetch app source code"
-    git:
-      repo: 'https://github.com/Artemmkin/reddit.git'
-      dest: '~/reddit'
-    register: fetch_source_success_check
+  handlers:
+    - name: restart mongod
+      become: true
+      service: name=mongod state=restarted
 
-  - name: "Install gems by bundler"
-    bundler:
-      state: present
-      gemfile: ~/reddit/Gemfile
-    register: install_gems_success_check
+    - name: reload puma
+      become: true
+      systemd: name=puma state=reloaded
 
-  - name: Restart Puma Server
-    systemd:
-      name: puma
-      state: restarted
-      daemon_reload: yes
-      enabled: yes
-    become: yes
-    when: fetch_source_success_check.changed and install_gems_success_check.changed
-...
+    - name: restart puma
+      become: true
+      systemd: name=puma state=restarted
