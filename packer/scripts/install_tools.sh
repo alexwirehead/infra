@@ -12,4 +12,5 @@ packer -v && terraform -v
 git config --global user.email "alex@wirehead.pro"
 git config --global user.name "alexwirehead"
 echo "cleanup tmp"
+shopt -s extglob
 cd /tmp/ && ls -A1 -- *@(packer|terraform)* | sudo xargs rm -f
