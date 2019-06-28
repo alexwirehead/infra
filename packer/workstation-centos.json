@@ -1,0 +1,30 @@
+{
+    "variables":{
+        "project_id": null,
+        "source_image_family": null,
+        "machine_type": null
+    },
+
+    "builders": [
+        {
+            "type": "googlecompute",
+            "image_description": "Baked workstation image with tools like ansible, terraform, packer, git and etc",
+            "project_id": "{{user `project_id`}}",
+            "image_name": "workstation-centos",
+            "source_image_family": "{{user `source_image_family`}}",
+            "disk_size": 10,
+            "network": "default",
+            "tags": ["workstation"],
+            "zone": "europe-west1-b",
+            "ssh_username": "wirehead",
+            "machine_type": "{{user `machine_type`}}"
+        }
+    ],
+
+    "provisioners": [
+        {
+            "type": "shell",
+            "script": "scripts/install_tools.sh"
+        }
+    ]
+}
