@@ -9,5 +9,7 @@ sudo wget https://releases.hashicorp.com/packer/1.4.2/packer_1.4.2_linux_amd64.z
 cd /tmp && sudo unzip packer_1.4.2_linux_amd64.zip
 sudo chmod +x packer && sudo cp packer /usr/bin
 packer -v && terraform -v
+git config --global user.email "alex@wirehead.pro"
+git config --global user.name "alexwirehead"
 echo "cleanup tmp"
 cd /tmp/ && ls -A1 -- *@(packer|terraform)* | sudo xargs rm -f
