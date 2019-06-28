@@ -1,0 +1,21 @@
+---
+# Setup and configure ruby for reddit app
+- name: "Reddit App: Configure app env"
+  hosts: all
+  gather_facts: false
+  become: true
+
+  tasks:
+  - name: "Install ruby and rubygems and required packages"
+    apt: "name={{ item }} state=present"
+    with_items:
+      - ruby-full
+      - ruby-dev
+      - build-essential
+
+  - name: "Install Ruby bundler"
+    gem:
+      name: bundler
+      state: present
+      user_install: no
+...
