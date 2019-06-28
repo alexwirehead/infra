@@ -1,8 +1,9 @@
+---
 # Setup and configure mongodb for reddit app
 - name: "Reddit app: install mongo"
-  hosts: reddit-db
-  gather_facts: no
-  become: yes
+  hosts: all
+  gather_facts: false
+  become: true
 
   tasks:
   - name: "Add mongo  repo"
@@ -24,3 +25,4 @@
       state: restarted
       enabled: yes
     when: mongo_install_check.changed
+...

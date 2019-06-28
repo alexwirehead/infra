@@ -24,8 +24,7 @@
     "provisioners": [
         {
             "type": "ansible",
-            "playbook_file": "../ansible/reddit_app.yml",
-            "host_alias": "reddit-app"
+            "playbook_file": "../ansible/packer_reddit_app.yml"
         }
     ]
 }
