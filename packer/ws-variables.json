@@ -1,0 +1,5 @@
+{
+        "project_id": "infra-244406",
+        "machine_type": "g1-small",
+        "source_image_family": "centos-7"
+}
