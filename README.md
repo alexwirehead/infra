@@ -1,79 +1,94 @@
-# Deploy Sinatra app
+# Инфраструктурный репозиторий для познания инструментов: Ansible, Terraform, Packer, GCP
 
-## Создание инстантса GCP, настройка окружения и деплой приложения Ruby Sinatra
+## Структура проекта
 
-**Для создания инстанса и деплоя приложения выполнять команду**
+* ansible — Ansible роли для конфигурации инстанса app-сервера, mongodb-сервера, деплоя приложения Sinatra
+* packer — конфигурация базовых Packer образов для развертывания инфраструктуры в GCP
+* terraform — Terraform конфигурация инфраструктуры на основе ранее созданых Packer образов GCP
 
-```bash
-gcloud compute instances create \
-  --boot-disk-size=10GB \
-  --image=ubuntu-1604-xenial-v20190605 \
-  --image-project=ubuntu-os-cloud \
-  --machine-type=g1-small \
-  --tags puma-server \
-  --restart-on-failure \
-  --metadata startup-script='sudo -u appuser \
-        bash -c "wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/install_ruby.sh | bash && \
-                 wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/install_mongodb.sh | bash && \
-                 wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/deploy.sh | bash"' \
-  --zone=europe-west1-b reddit-app
-```
+## Развертывание и конфигурация инфраструктуры в GCP
 
-**Открываем порт приложения в firewall**
+В проекте используется GCP Compute Engine. 
+Перед началом работы на машину, с которой будем управлять инфраструктурой, необходимо установить и настроить следующие инструменты:
+1. gcloud CLI. Подробнее в [документации](https://cloud.google.com/sdk/docs/how-to)
+2. Ansible. Подробнее в [документации](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html)
+3. Packer. Подробнее в [документации](https://www.packer.io/intro/getting-started/install.html)
+4. Terraform. Подробнее в [документации](https://learn.hashicorp.com/terraform/getting-started/install.html)
+5. Сгенерированный ssh-key добавленный в GCP 
+
+После успешной установки и конфигурации необходимых инструментов можем приступить к развертыванию и конфигурации инфраструктуры.
+1. клонируем репозиторий командой:
 
 ```bash
-gcloud compute firewall-rules create puma-server \
-  --allow tcp:8080 \
-  --target-tags=puma-server \
-  --source-ranges=0.0.0.0/0 \
-  --description="allow tcp for app"
+git clone https://github.com/alexwirehead/infra.git ~/git
 ```
 
-## Выполненые задания по Packer HashiCorp
-
-
-### В папке packer шаблоны для создания образов в GCP
-
-* immutable.json — bake шаблон с кодом
-* ubuntu16.json — шаблон с настроенным окружением, необходим деплой кода
-* variables.json — переменные
-* scripts — скрипты для настройки и деплоя образов
-
-**Для билда base os image в директории packer выполнить команду:**
+2. Переходим в директорию packer и в variables.json для переменной "project_id" указать ID вашего проекта в GCP
+```json
+{
+        "project_id": "<gpc-progect-id>",
+        "source_image": "ubuntu-1604-xenial-v20190605"
+}
+```
+3. Соберем базовые образы для app-сервера и mongodb-сервера
 
 ```bash
- packer build --var-file=variables.json ubuntu16.json
-```
-**Для создания инстанса из base os image выполнить:**
-
-```bash
-gcloud compute instances create \
-  --boot-disk-size=10GB \
-  --image=--image=reddit-base-<epoch_creation_time> \
-  --image-project=ubuntu-os-cloud \
-  --machine-type=g1-small \
-  --tags puma-server \
-  --restart-on-failure \
-  --metadata startup-script='sudo -u appuser \
-        bash -c "wget -O - https://raw.githubusercontent.com/alexwirehead/infra/master/deploy.sh | bash"' \
-  --zone=europe-west1-b reddit-app
+packer build --var-file=variables.json app.json && packer build --var-file=variables.json db.json
 ```
 
-**Для билда baked os image в директории packer выполнить команду::**
+Успешный результат сборки образов будет — два образа в GCP: reddit-db-base, reddit-app-base
+В качестве провиженеров packer используются Ansible playbooks `../ansible/packer_reddit_app.yml` и `../ansible/packer_reddit_db.yml`
 
-```bash
- packer build --var-file=variables.json ubuntu16.json
-```
+4. Развернём инстансы stage используя Terraform, для этого перейдем в директорию `../terraform/stage`
+   - В директории создать `terraform.tfvars`, указать ваши значения для переменных:
+     ```json
+     project = "gpc-progect-id"
+     public_key_path = "~/.ssh/<key_file_name>.pub"
+     private_key_path = "~/.ssh/<key_file_name>"
+     ```
+   - Terraform сконфигурирован для использования в качестве remote backend gcs, т.е предварительно необзодимо создать bucket и поменять настройки в `main.tf` в соответствии с созданым bucket, в секции:
+     ```
+     terraform {
+       backend "gcs" {
+       bucket  = "<bucket_name>"
+       prefix  = "<bucket_prefix_name>"
+       }
+     }
+     ```
+   - выполним инициализацию
+   ```bash
+   terraform int
+   ```
+   - проверим нашу конфигурацию
+   ```bash
+   terraform plan
+   ```
+   - Если terraform plan прошёл успешно, то можем развернуть инстанмы командой
+   ```bash
+   terraform apply
+   ```
+   После успешного создание инстансов terrafom вернёть внещние и внутрении ip-ардеса инстансов, которые нам будут необходимы для дальнейшей конфигурации
+   - Для удаления инстансов использовать команду
+   ```bash
+   terraform destroy
+   ```
 
-**Для создания инстанса из baked os image выполнить:**
-
-```bash
-gcloud compute instances create \
-  --boot-disk-size=10GB \
-  --image=--image=reddit-immutable-<epoch_creation_time> \
-  --image-project=ubuntu-os-cloud \
-  --machine-type=g1-small \
-  --tags puma-server \
-  --restart-on-failure \
-  --zone=europe-west1-b reddit-app
-```
+5. Сконфигурируем и задеплоим приложение используя Ansible
+   - перейти в папку `../../ansible` в ansible.cfg прописываем следующие значения
+   ```
+   [defaults]
+   inventory = ./environments/stage/hosts
+   remote_user = <gpc_remote_user_name>
+   private_key_file = <path_to_remote_user_private_key>
+   host_key_checking = False
+   ```  
+   - `./environments/stage/hosts` прописать внешние IP инстансов
+   - `./environments/stage/group_vars/app` для переменной **db_host** прописать внутрений IP db-сервера
+   - проверим корректность выполнения конфигурации
+   ```bash
+   ansible-playbook site.yml --check
+   ```
+   - если все хорошо, то можем накатывать конфигурацию и деплоить риложения
+   ```bash
+   ansible-playbook site.yml
+   ```
