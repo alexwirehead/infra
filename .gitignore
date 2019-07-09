@@ -6,3 +6,4 @@
 *.retry
 .vagrant/
 *.logs
+*.log
