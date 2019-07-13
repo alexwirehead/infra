@@ -7,3 +7,4 @@
 .vagrant/
 *.logs
 *.log
+__pycache__
