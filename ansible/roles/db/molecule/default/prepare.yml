@@ -1,13 +1,9 @@
 ---
-- name: Configure MongoDB
-  hosts: db
-  become: true
+- name: Prepare
+  hosts: all
   gather_facts: false
-
-  pre_tasks:
+  tasks:
     - name: Install python for Ansible
       raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+      become: true
       changed_when: false
-
-  roles:
-    - db

@@ -4,3 +4,7 @@
 *.tfvars
 .terraform/
 *.retry
+.vagrant/
+*.logs
+*.log
+__pycache__
