@@ -6,6 +6,7 @@ provider "google" {
 
 data "google_compute_image" "gitlab_image" {
   family = "centos-7"
+  project = "centos-cloud"
 }
 
 
