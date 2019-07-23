@@ -9,7 +9,7 @@ data "google_compute_image" "gitlab_image" {
 }
 
 
-resource "google_compute_instamce" "gitlab" {
+resource "google_compute_instance" "gitlab" {
   name = "${var.machine_name}"
   machine_type = "${var.machine_type}"
   zone         = "${var.zone}"
